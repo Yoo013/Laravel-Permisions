@@ -15,17 +15,19 @@
                 </div>
             </div>
             <div class="card-body">
-
-                    <div class="row">
-                        <label for="name" class="col-md-4 col-form-label text-md-end text-start"><strong>Name:</strong></label>
-                        <div class="col-md-6" style="line-height: 35px;">
+                    <div class="roww">
+                        <div>
+                            <label for="name" class=""><strong>Name:</strong></label>
+                        </div>
+                        <div ">
                             {{ $product->name }}
                         </div>
                     </div>
-
-                    <div class="row">
-                        <label for="description" class="col-md-4 col-form-label text-md-end text-start"><strong>Description:</strong></label>
-                        <div class="col-md-6" style="line-height: 35px;">
+                    <div class="roww">
+                        <div>
+                            <label for="description" class=""><strong>Description:</strong></label>
+                        </div>
+                        <div ">
                             {{ $product->description }}
                         </div>
                     </div>
@@ -34,5 +36,17 @@
         </div>
     </div>    
 </div>
+
+<style>
+    .roww {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    label {
+        font-size: 15px;
+        display: block;
+    }
+</style>
     
 @endsection

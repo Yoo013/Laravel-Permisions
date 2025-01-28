@@ -14,7 +14,10 @@
                         </div>
                     @endif
 
-                    {{ __('You are logged in!') }}
+                            
+                    {{ __('You are logged in! Hi,') }} {{ Auth::user()->name }} {{ __('Role anda adalah') }}
+
+                    {{ Auth::user()->roles->pluck('name')->implode(', ') }}
 
                     <p>This is your application dashboard.</p>
                     @canany(['create-role', 'edit-role', 'delete-role'])

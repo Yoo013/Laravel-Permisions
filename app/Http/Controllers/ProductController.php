@@ -5,54 +5,51 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
 {
-    /**
-     * Instantiate a new ProductController instance.
-     */
+
     public function __construct()
     {
-       $this->middleware('auth');
-       $this->middleware('permission:view-product|create-product|edit-product|delete-product', ['only' => ['index','show']]);
-       $this->middleware('permission:create-product', ['only' => ['create','store']]);
-       $this->middleware('permission:edit-product', ['only' => ['edit','update']]);
-       $this->middleware('permission:delete-product', ['only' => ['destroy']]);
+        $this->middleware('auth');
+        $this->middleware('permission:view-product|create-product|edit-product|delete-product', ['only' => ['index', 'show']]);
+        $this->middleware('permission:create-product', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit-product', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete-product', ['only' => ['destroy']]);
     }
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(): View
+
+    public function index(Request $request)
     {
-        return view('products.index', [
-            'products' => Product::latest()->paginate(3)
-        ]);
+        if (request()->ajax()) {
+            $products = Product::query();
+            return DataTables::of($products)
+                ->make();
+        }
+        return view('products.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+
     public function create(): View
     {
         return view('products.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreProductRequest $request): RedirectResponse
     {
-        Product::create($request->all());
+        $productData = $request->all();
+
+        Product::create($productData);
+
         return redirect()->route('products.index')
-                ->withSuccess('New product is added successfully.');
+            ->withSuccess('New product is added successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Product $product): View
     {
         return view('products.show', [
@@ -60,9 +57,8 @@ class ProductController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+
+
     public function edit(Product $product): View
     {
         return view('products.edit', [
@@ -70,23 +66,24 @@ class ProductController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
     public function update(UpdateProductRequest $request, Product $product): RedirectResponse
     {
         $product->update($request->all());
         return redirect()->back()
-                ->withSuccess('Product is updated successfully.');
+            ->withSuccess('Product is updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Product $product): RedirectResponse
+
+    public function destroy($id)
     {
-        $product->delete();
-        return redirect()->route('products.index')
-                ->withSuccess('Product is deleted successfully.');
+        $product = Product::find($id);
+
+        if ($product) {
+            $product->delete();
+            return response()->json(['message' => 'Product deleted successfully']);
+        } else {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
     }
 }

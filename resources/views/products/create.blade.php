@@ -47,5 +47,12 @@
         </div>
     </div>    
 </div>
+
+<style>
+        label {
+        font-size: 15px;
+        display: block;
+    }
+</style>
     
 @endsection

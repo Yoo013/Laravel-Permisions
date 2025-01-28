@@ -24,19 +24,14 @@ class UserController extends Controller
         $this->middleware('permission:delete-user', ['only' => ['destroy']]);
     }
 
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index(): View
     {
         return view('users.index', [
-            'users' => User::latest('id')->paginate(3)
+            'users' => User::latest('id')->paginate(10)
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(): View
     {
         return view('users.create', [
@@ -44,9 +39,6 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreUserRequest $request): RedirectResponse
     {
         $input = $request->all();
@@ -59,20 +51,15 @@ class UserController extends Controller
                 ->withSuccess('New user is added successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
+
     public function show(User $user): RedirectResponse
     {
         return redirect()->route('users.index');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+   
     public function edit(User $user): View
     {
-        // Check Only Super Admin can update his own Profile
         if ($user->hasRole('Super Admin')){
             if($user->id != auth()->user()->id){
                 abort(403, 'USER DOES NOT HAVE THE RIGHT PERMISSIONS');
